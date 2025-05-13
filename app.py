@@ -22,9 +22,10 @@ if uploaded_file:
     filtered_df = df.copy()
 
     # Now safe to filter by Date
-    available_dates = filtered_df["Date"].dropna().unique()
+    df["Date"] = df["Date"].astype(str)
+    available_dates = df["Date"].dropna().unique()
     available_dates.sort()
-    selected_day = st.selectbox("Filter by Date", ["All"] + list(available_dates.astype(str)))
+    selected_day = st.selectbox("Filter by Date", ["All"] + list(available_dates))
 
     if selected_day != "All":
         filtered_df = filtered_df[filtered_df["Date"].astype(str) == selected_day]
@@ -43,9 +44,15 @@ if uploaded_file:
     selected_employees = st.multiselect("Filter by Any Technician on Job", sorted(all_employees))
 
     if selected_employees:
-        filtered_df = filtered_df[
-            filtered_df[employee_cols].apply(lambda row: any(emp in row.values for emp in selected_employees), axis=1)
-        ]
+        all_together = st.toggle("Show only rows where ALL selected technicians worked together")
+        if all_together:
+            filtered_df = filtered_df[
+                filtered_df[employee_cols].apply(lambda row: all(emp in row.values for emp in selected_employees), axis=1)
+            ]
+        else:
+            filtered_df = filtered_df[
+                filtered_df[employee_cols].apply(lambda row: any(emp in row.values for emp in selected_employees), axis=1)
+            ]
 
 
     st.subheader("Filtered Data")
