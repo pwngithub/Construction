@@ -22,7 +22,12 @@ if uploaded_file:
     filtered_df = df.copy()
 
     # Now safe to filter by Date
-    df["Date"] = df["Date"].astype(str)
+    
+    df["Date"] = df["Date"].astype(str).str.strip()
+    available_dates = df["Date"].dropna().unique()
+    available_dates.sort()
+    selected_day = st.selectbox("Filter by Date", ["All"] + list(available_dates))
+
     available_dates = df["Date"].dropna().unique()
     available_dates.sort()
     selected_day = st.selectbox("Filter by Date", ["All"] + list(available_dates))
