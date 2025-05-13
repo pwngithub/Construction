@@ -2,14 +2,13 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import re
 
 st.title("Construction Daily Workflow Dashboard")
 
 uploaded_file = st.file_uploader("Upload Excel File", type=["xlsx"])
 if uploaded_file:
     df = pd.read_excel(uploaded_file)
-
-    # Normalize column names
     df.columns = df.columns.str.strip()
 
     # Filters
@@ -32,23 +31,26 @@ if uploaded_file:
     st.subheader("Filtered Data")
     st.dataframe(filtered_df)
 
-    def extract_footage(row):
-        # Prefer explicit "Strand Footage" or "Work Hours" if provided
-        for col in ["Strand Footage", "Work Hours", "Notes:"]:
-            if pd.notna(row.get(col)):
+    def extract_footage_from_notes(text):
+        if isinstance(text, str):
+            match = re.search(r'Footage[:\-]?\s*([0-9,]+)', text, re.IGNORECASE)
+            if match:
+                num = match.group(1).replace(",", "")
                 try:
-                    return float(str(row[col]).split()[0])
+                    return float(num)
                 except:
-                    continue
+                    return 0
         return 0
 
-    # Identify activities
-    lash_df = filtered_df[filtered_df["What did you do."].str.contains("Lashed Fiber", na=False)].copy()
-    pull_df = filtered_df[filtered_df["What did you do."].str.contains("Pulled Fiber", na=False)].copy()
-    strand_df = filtered_df[filtered_df["What did you do."].str.contains("Strand", na=False)].copy()
+    def assign_footage(data):
+        data = data.copy()
+        data["Footage"] = data["Notes:"].apply(extract_footage_from_notes)
+        return data
 
-    for activity_df in [lash_df, pull_df, strand_df]:
-        activity_df["Footage"] = activity_df.apply(extract_footage, axis=1)
+    # Identify activity types and extract footage from Notes
+    lash_df = assign_footage(filtered_df[filtered_df["What did you do."].str.contains("Lashed Fiber", na=False)])
+    pull_df = assign_footage(filtered_df[filtered_df["What did you do."].str.contains("Pulled Fiber", na=False)])
+    strand_df = assign_footage(filtered_df[filtered_df["What did you do."].str.contains("Strand", na=False)])
 
     lash_total = lash_df["Footage"].sum()
     pull_total = pull_df["Footage"].sum()
