@@ -11,7 +11,6 @@ if uploaded_file:
     df = pd.read_excel(uploaded_file)
     df.columns = df.columns.str.strip()
 
-    # Filters
     techs = df["Who filled this out?"].dropna().unique()
     projects = df["Project or labor?"].dropna().unique()
     trucks = df["What Truck?"].dropna().unique()
@@ -31,24 +30,31 @@ if uploaded_file:
     st.subheader("Filtered Data")
     st.dataframe(filtered_df)
 
-    def extract_footage(row):
-        for field in ["Notes:", "Billing Notes"]:
-            text = row.get(field)
-            if isinstance(text, str):
-                match = re.search(r'Footage[:\-]?\s*([0-9,]+)', text, re.IGNORECASE)
-                if match:
-                    try:
-                        return float(match.group(1).replace(",", ""))
-                    except:
-                        continue
+    def extract_footage_by_activity(row):
+        activity = str(row.get("What did you do.", "")).lower()
+        source_col = None
+        if "lashed fiber" in activity:
+            source_col = "Fiber Lash Info."
+        elif "pulled fiber" in activity:
+            source_col = "Fiber pull Info."
+        elif "strand" in activity:
+            source_col = "Strand info"
+
+        if source_col and source_col in row:
+            text = str(row.get(source_col, ""))
+            match = re.search(r'Footage[:\-]?\s*([0-9,]+)', text, re.IGNORECASE)
+            if match:
+                try:
+                    return float(match.group(1).replace(",", ""))
+                except:
+                    return 0
         return 0
 
     def assign_footage(data):
         data = data.copy()
-        data["Footage"] = data.apply(extract_footage, axis=1)
+        data["Footage"] = data.apply(extract_footage_by_activity, axis=1)
         return data
 
-    # Identify activity types and extract footage
     lash_df = assign_footage(filtered_df[filtered_df["What did you do."].str.contains("Lashed Fiber", na=False)])
     pull_df = assign_footage(filtered_df[filtered_df["What did you do."].str.contains("Pulled Fiber", na=False)])
     strand_df = assign_footage(filtered_df[filtered_df["What did you do."].str.contains("Strand", na=False)])
@@ -80,19 +86,16 @@ if uploaded_file:
     plot_footage(pull_df, "Fiber Pull Footage")
     plot_footage(strand_df, "Strand Footage")
 
-
     st.subheader("Work Summary (Grouped by Date and Project)")
 
     def build_summary_from_row(row):
         employees = [row.get(f"Employee{i}" if i > 0 else "Employee") for i in range(6)]
         employees = [str(emp) for emp in employees if pd.notna(emp)]
         employee_str = ", ".join(employees[:-1]) + f" and {employees[-1]}" if len(employees) > 1 else employees[0] if employees else "Unknown"
-
         truck = row.get("What Truck?", "Unknown Truck")
         action = row.get("What did you do.", "Unknown Action")
         fiber = row.get("Fiber", "Unknown Fiber")
-        footage = extract_footage(row)
-
+        footage = row.get("Footage", 0)
         if employees and footage > 0:
             return f"{employee_str} used {truck} to do {action} with {fiber} for {int(footage)} feet."
         return None
@@ -100,11 +103,10 @@ if uploaded_file:
     summary_groups = []
 
     for (date, project), group in filtered_df.groupby(["Date", "Project or labor?"], dropna=False):
+        group = assign_footage(group)
         group_summary = []
         for _, row in group.iterrows():
-            action = str(row.get("What did you do.", ""))
-            if any(key in action for key in ["Lashed Fiber", "Pulled Fiber", "Strand"]):
-                row["Footage"] = extract_footage(row)
+            if row["Footage"] > 0:
                 sentence = build_summary_from_row(row)
                 if sentence:
                     group_summary.append(sentence)
