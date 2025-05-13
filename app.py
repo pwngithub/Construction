@@ -20,7 +20,8 @@ if uploaded_file:
     techs = sorted(df["Who filled this out?"].dropna().unique())
     projects = sorted(df["Project or labor?"].dropna().unique())
     trucks = sorted(df["What Truck?"].dropna().unique())
-    dates = sorted(df["Date"].dropna().unique())
+    full_dates = df["Date"].dropna().unique()
+    dates = sorted(full_dates)
 
     # Group all filters in the sidebar
     st.sidebar.header("Filter Options")
