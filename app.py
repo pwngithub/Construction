@@ -67,6 +67,8 @@ if uploaded_file:
             source_col = "Fiber pull Info."
         elif "strand" in activity:
             source_col = "Stand info"
+        elif "drive off" in activity:
+            source_col = "Fiber Lash Info."
 
         if source_col and source_col in row:
             text = str(row.get(source_col, ""))
