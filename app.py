@@ -17,24 +17,22 @@ if uploaded_file:
 
     selected_tech = st.selectbox("Filter by Technician", ["All"] + list(techs))
     selected_project = st.selectbox("Filter by Project/Labor", ["All"] + list(projects))
-    
     selected_truck = st.selectbox("Filter by Truck", ["All"] + list(trucks))
+
+    filtered_df = df.copy()
+
+    # Now safe to filter by Date
     available_dates = filtered_df["Date"].dropna().unique()
     available_dates.sort()
     selected_day = st.selectbox("Filter by Date", ["All"] + list(available_dates.astype(str)))
-    
 
-    filtered_df = df.copy()
-    if selected_tech != "All":
-        filtered_df = filtered_df[filtered_df["Who filled this out?"] == selected_tech]
-    if selected_project != "All":
-        filtered_df = filtered_df[filtered_df["Project or labor?"] == selected_project]
-    
-    if selected_truck != "All":
-        filtered_df = filtered_df[filtered_df["What Truck?"] == selected_truck]
     if selected_day != "All":
         filtered_df = filtered_df[filtered_df["Date"].astype(str) == selected_day]
     
+        filtered_df = filtered_df[filtered_df["Who filled this out?"] == selected_tech]
+    if selected_project != "All":
+        filtered_df = filtered_df[filtered_df["Project or labor?"] == selected_project]
+    if selected_truck != "All":
         filtered_df = filtered_df[filtered_df["What Truck?"] == selected_truck]
 
     st.subheader("Filtered Data")
