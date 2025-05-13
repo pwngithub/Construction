@@ -40,11 +40,11 @@ if uploaded_file:
     all_employees = pd.unique(filtered_df[employee_cols].values.ravel('K'))
     all_employees = [e for e in all_employees if pd.notna(e)]
 
-    selected_employee = st.selectbox("Filter by Any Technician on Job", ["All"] + sorted(all_employees))
+    selected_employees = st.multiselect("Filter by Any Technician on Job", sorted(all_employees))
 
-    if selected_employee != "All":
+    if selected_employees:
         filtered_df = filtered_df[
-            filtered_df[employee_cols].apply(lambda row: selected_employee in row.values, axis=1)
+            filtered_df[employee_cols].apply(lambda row: any(emp in row.values for emp in selected_employees), axis=1)
         ]
 
 
@@ -85,9 +85,13 @@ if uploaded_file:
         data["Footage"] = data.apply(extract_footage_by_activity, axis=1)
         return data
 
-    lash_df = assign_footage(filtered_df[filtered_df["What did you do."].str.contains("Lashed Fiber", na=False)])
-    pull_df = assign_footage(filtered_df[filtered_df["What did you do."].str.contains("Pulled Fiber", na=False)])
-    strand_df = assign_footage(filtered_df[filtered_df["What did you do."].str.contains("Strand", na=False)])
+
+    # Assign footage only once to the fully filtered dataframe
+    filtered_df = assign_footage(filtered_df)
+    lash_df = filtered_df[filtered_df["What did you do."].str.contains("Lashed Fiber", na=False)]
+    pull_df = filtered_df[filtered_df["What did you do."].str.contains("Pulled Fiber", na=False)]
+    strand_df = filtered_df[filtered_df["What did you do."].str.contains("Strand", na=False)]
+    
 
     lash_total = lash_df["Footage"].sum()
     pull_total = pull_df["Footage"].sum()
