@@ -35,6 +35,19 @@ if uploaded_file:
     if selected_truck != "All":
         filtered_df = filtered_df[filtered_df["What Truck?"] == selected_truck]
 
+    # Gather all employee columns and create a unique list
+    employee_cols = ["Employee", "Employee.1", "Employee.2", "Employee.3", "Employee.4", "Employee.5"]
+    all_employees = pd.unique(filtered_df[employee_cols].values.ravel('K'))
+    all_employees = [e for e in all_employees if pd.notna(e)]
+
+    selected_employee = st.selectbox("Filter by Any Technician on Job", ["All"] + sorted(all_employees))
+
+    if selected_employee != "All":
+        filtered_df = filtered_df[
+            filtered_df[employee_cols].apply(lambda row: selected_employee in row.values, axis=1)
+        ]
+
+
     st.subheader("Filtered Data")
     st.dataframe(filtered_df)
 
