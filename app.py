@@ -38,16 +38,25 @@ if uploaded_file:
         elif "pulled fiber" in activity:
             source_col = "Fiber pull Info."
         elif "strand" in activity:
-            source_col = "Strand info"
+            source_col = "Stand info"
 
         if source_col and source_col in row:
             text = str(row.get(source_col, ""))
-            match = re.search(r'Footage[:\-]?\s*([0-9,]+)', text, re.IGNORECASE)
-            if match:
-                try:
-                    return float(match.group(1).replace(",", ""))
-                except:
-                    return 0
+            if "strand" in activity:
+                # Extract the last number in the string
+                matches = re.findall(r'(\d+(?:,\d+)?)', text)
+                if matches:
+                    try:
+                        return float(matches[-1].replace(",", ""))
+                    except:
+                        return 0
+            else:
+                match = re.search(r'Footage[:\-]?\s*([0-9,]+)', text, re.IGNORECASE)
+                if match:
+                    try:
+                        return float(match.group(1).replace(",", ""))
+                    except:
+                        return 0
         return 0
 
     def assign_footage(data):
