@@ -31,9 +31,8 @@ if uploaded_file:
     available_dates = df["Date"].dropna().unique()
     available_dates.sort()
     selected_day = st.selectbox("Filter by Date", ["All"] + list(available_dates))
-
     if selected_day != "All":
-        filtered_df = filtered_df[filtered_df["Date"].astype(str) == selected_day]
+        filtered_df = filtered_df[filtered_df["Date"] == selected_day]
     
         filtered_df = filtered_df[filtered_df["Who filled this out?"] == selected_tech]
     if selected_project != "All":
