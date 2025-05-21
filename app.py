@@ -145,24 +145,24 @@ if uploaded_file:
 
     st.subheader("Export Filtered Results")
     @st.cache_data
-    # Removed CSV export logic
-    
+    def convert_df_to_csv(dataframe):
+        return dataframe.to_csv(index=False).encode("utf-8")
 
-            # Removed csv_data assignment convert_df_to_csv(filtered_df)
-        with st.container():
-    st.download_button(
-            ,
+    if not filtered_df.empty:
+        csv_data = convert_df_to_csv(filtered_df)
+        st.download_button(
+            label="📤 Download Filtered Data as CSV",
             data=csv_data,
-            ,
-            
+            file_name="filtered_construction_data_20250521_013419.csv",
+            mime="text/csv"
         )
 
 
     st.subheader("Export Filtered Results")
 
     @st.cache_data
-    # Removed CSV export logic
-    
+    def convert_df_to_csv(dataframe):
+        return dataframe.to_csv(index=False).encode("utf-8")
 
     def generate_pdf_summary(groups):
         from fpdf import FPDF
@@ -189,19 +189,18 @@ if uploaded_file:
         pdf.output(output_path)
         return output_path
 
-            # Removed csv_data assignment convert_df_to_csv(filtered_df)
-        with st.container():
-    st.download_button(
-            ,
+    if not filtered_df.empty:
+        csv_data = convert_df_to_csv(filtered_df)
+        st.download_button(
+            label="📤 Download Filtered Data as CSV",
             data=csv_data,
-            ,
-            
+            file_name="filtered_construction_data_20250521_013419.csv",
+            mime="text/csv"
         )
 
         pdf_path = generate_pdf_summary(summary_groups)
         with open(pdf_path, "rb") as f:
-            with st.container():
-    st.download_button(
+            st.download_button(
                 label="📄 Download Filtered Summary as PDF",
                 data=f,
                 file_name="filtered_construction_summary_20250521_013419.pdf",
