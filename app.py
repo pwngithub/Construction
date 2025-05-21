@@ -145,11 +145,10 @@ if uploaded_file:
 
     st.subheader("Export Filtered Results")
     @st.cache_data
-    def convert_df_to_csv(dataframe):
+    # Removed CSV export logic
     
 
-    if not filtered_df.empty:
-        csv_data = convert_df_to_csv(filtered_df)
+            # Removed csv_data assignment convert_df_to_csv(filtered_df)
         st.download_button(
             ,
             data=csv_data,
@@ -161,7 +160,7 @@ if uploaded_file:
     st.subheader("Export Filtered Results")
 
     @st.cache_data
-    def convert_df_to_csv(dataframe):
+    # Removed CSV export logic
     
 
     def generate_pdf_summary(groups):
@@ -189,8 +188,7 @@ if uploaded_file:
         pdf.output(output_path)
         return output_path
 
-    if not filtered_df.empty:
-        csv_data = convert_df_to_csv(filtered_df)
+            # Removed csv_data assignment convert_df_to_csv(filtered_df)
         st.download_button(
             ,
             data=csv_data,
