@@ -144,6 +144,56 @@ if uploaded_file:
         st.write("No grouped summaries found for the selected filters.")
 
     st.subheader("Export Filtered Results")
+
+    @st.cache_data
+    def convert_df_to_csv(dataframe):
+        return dataframe.to_csv(index=False).encode("utf-8")
+
+    def generate_pdf_summary(groups):
+        from fpdf import FPDF
+
+        def safe(text):
+            return text.replace("—", "-")
+
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+        pdf.set_title("Filtered Construction Summary Report")
+        pdf.cell(200, 10, txt="Filtered Construction Summary Report", ln=True, align='C')
+        pdf.ln(5)
+
+        for date, project, summaries in groups:
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(200, 10, txt=safe(f"{date} - {project if pd.notna(project) else 'Unspecified'}"), ln=True)
+            pdf.set_font("Arial", size=11)
+            for summary in summaries:
+                pdf.multi_cell(0, 8, txt=safe(f"- {summary}"))
+            pdf.ln(2)
+
+        output_path = "/mnt/data/filtered_construction_summary.pdf"
+        pdf.output(output_path)
+        return output_path
+
+    with st.container():
+        if not filtered_df.empty:
+            csv_data = convert_df_to_csv(filtered_df)
+            st.download_button(
+                label="📤 Download Filtered Data as CSV",
+                data=csv_data,
+                file_name="filtered_construction_data.csv",
+                mime="text/csv",
+                key="csv_button_final"
+            )
+
+            pdf_path = generate_pdf_summary(summary_groups)
+            with open(pdf_path, "rb") as f:
+                st.download_button(
+                    label="📄 Download Filtered Summary as PDF",
+                    data=f,
+                    file_name="filtered_construction_summary.pdf",
+                    mime="application/pdf",
+                    key="pdf_button_final"
+                )
     @st.cache_data
     def convert_df_to_csv(dataframe):
         return dataframe.to_csv(index=False).encode("utf-8")
@@ -152,7 +202,6 @@ if uploaded_file:
         csv_data = convert_df_to_csv(filtered_df)
         st.download_button(
             label="📤 Download Filtered Data as CSV",
-            key="csv_button",
             data=csv_data,
             file_name="filtered_construction_data.csv",
             mime="text/csv"
@@ -190,11 +239,60 @@ if uploaded_file:
         pdf.output(output_path)
         return output_path
 
+    with st.container():
+        if not filtered_df.empty:
+            csv_data = convert_df_to_csv(filtered_df)
+            st.download_button(
+                label="📤 Download Filtered Data as CSV",
+                data=csv_data,
+                file_name="filtered_construction_data.csv",
+                mime="text/csv",
+                key="csv_button_final"
+            )
+
+            pdf_path = generate_pdf_summary(summary_groups)
+            with open(pdf_path, "rb") as f:
+                st.download_button(
+                    label="📄 Download Filtered Summary as PDF",
+                    data=f,
+                    file_name="filtered_construction_summary.pdf",
+                    mime="application/pdf",
+                    key="pdf_button_final"
+                )
+
+    @st.cache_data
+    def convert_df_to_csv(dataframe):
+        return dataframe.to_csv(index=False).encode("utf-8")
+
+    def generate_pdf_summary(groups):
+        from fpdf import FPDF
+
+        def safe(text):
+            return text.replace("—", "-")
+
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+        pdf.set_title("Filtered Construction Summary Report")
+        pdf.cell(200, 10, txt="Filtered Construction Summary Report", ln=True, align='C')
+        pdf.ln(5)
+
+        for date, project, summaries in groups:
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(200, 10, txt=safe(f"{date} - {project if pd.notna(project) else 'Unspecified'}"), ln=True)
+            pdf.set_font("Arial", size=11)
+            for summary in summaries:
+                pdf.multi_cell(0, 8, txt=safe(f"- {summary}"))
+            pdf.ln(2)
+
+        output_path = "/mnt/data/filtered_construction_summary.pdf"
+        pdf.output(output_path)
+        return output_path
+
     if not filtered_df.empty:
         csv_data = convert_df_to_csv(filtered_df)
         st.download_button(
             label="📤 Download Filtered Data as CSV",
-            key="csv_button",
             data=csv_data,
             file_name="filtered_construction_data.csv",
             mime="text/csv"
@@ -204,7 +302,6 @@ if uploaded_file:
         with open(pdf_path, "rb") as f:
             st.download_button(
                 label="📄 Download Filtered Summary as PDF",
-                key="pdf_button",
                 data=f,
                 file_name="filtered_construction_summary.pdf",
                 mime="application/pdf"
