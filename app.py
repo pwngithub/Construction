@@ -152,7 +152,7 @@ if uploaded_file:
         csv_data = convert_df_to_csv(filtered_df)
         st.download_button(
             label="📤 Download Filtered Data as CSV",
-            key="csv_download",
+            key="download_csv_filtered",
             data=csv_data,
             file_name="filtered_construction_data.csv",
             mime="text/csv"
@@ -194,7 +194,7 @@ if uploaded_file:
         csv_data = convert_df_to_csv(filtered_df)
         st.download_button(
             label="📤 Download Filtered Data as CSV",
-            key="csv_download",
+            key="download_csv_filtered",
             data=csv_data,
             file_name="filtered_construction_data.csv",
             mime="text/csv"
@@ -204,7 +204,7 @@ if uploaded_file:
         with open(pdf_path, "rb") as f:
             st.download_button(
                 label="📄 Download Filtered Summary as PDF",
-                key="pdf_download",
+                key="download_pdf_summary",
                 data=f,
                 file_name="filtered_construction_summary.pdf",
                 mime="application/pdf"
