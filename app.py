@@ -146,15 +146,15 @@ if uploaded_file:
     st.subheader("Export Filtered Results")
     @st.cache_data
     def convert_df_to_csv(dataframe):
-        return dataframe.to_csv(index=False).encode("utf-8")
+    
 
     if not filtered_df.empty:
         csv_data = convert_df_to_csv(filtered_df)
         st.download_button(
-            label="📤 Download Filtered Data as CSV",
+            ,
             data=csv_data,
-            file_name="filtered_construction_data_20250521_013419.csv",
-            mime="text/csv"
+            ,
+            
         )
 
 
@@ -162,7 +162,7 @@ if uploaded_file:
 
     @st.cache_data
     def convert_df_to_csv(dataframe):
-        return dataframe.to_csv(index=False).encode("utf-8")
+    
 
     def generate_pdf_summary(groups):
         from fpdf import FPDF
@@ -192,10 +192,10 @@ if uploaded_file:
     if not filtered_df.empty:
         csv_data = convert_df_to_csv(filtered_df)
         st.download_button(
-            label="📤 Download Filtered Data as CSV",
+            ,
             data=csv_data,
-            file_name="filtered_construction_data_20250521_013419.csv",
-            mime="text/csv"
+            ,
+            
         )
 
         pdf_path = generate_pdf_summary(summary_groups)
