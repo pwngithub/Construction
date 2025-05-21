@@ -149,7 +149,8 @@ if uploaded_file:
     
 
             # Removed csv_data assignment convert_df_to_csv(filtered_df)
-        st.download_button(
+        with st.container():
+    st.download_button(
             ,
             data=csv_data,
             ,
@@ -189,7 +190,8 @@ if uploaded_file:
         return output_path
 
             # Removed csv_data assignment convert_df_to_csv(filtered_df)
-        st.download_button(
+        with st.container():
+    st.download_button(
             ,
             data=csv_data,
             ,
@@ -198,7 +200,8 @@ if uploaded_file:
 
         pdf_path = generate_pdf_summary(summary_groups)
         with open(pdf_path, "rb") as f:
-            st.download_button(
+            with st.container():
+    st.download_button(
                 label="📄 Download Filtered Summary as PDF",
                 data=f,
                 file_name="filtered_construction_summary_20250521_013419.pdf",
