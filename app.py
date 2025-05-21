@@ -12,7 +12,6 @@ if uploaded_file:
     df.columns = df.columns.str.strip()
     df["Date"] = pd.to_datetime(df["Date"], errors="coerce").dt.strftime("%b %-d, %Y")
 
-    # All Employee columns
     employee_cols = ["Employee", "Employee.1", "Employee.2", "Employee.3", "Employee.4", "Employee.5"]
     all_employees = pd.unique(df[employee_cols].values.ravel("K"))
     all_employees = [e for e in all_employees if pd.notna(e)]
@@ -23,7 +22,6 @@ if uploaded_file:
     full_dates = df["Date"].dropna().unique()
     dates = sorted(full_dates)
 
-    # Group all filters in the sidebar
     st.sidebar.header("Filter Options")
     selected_techs = st.sidebar.multiselect("Filter by Technicians (Any Match)", all_employees, key="filter_tech")
     require_all_techs = st.sidebar.toggle("Require All Selected Techs", key="toggle_all_techs")
@@ -31,7 +29,6 @@ if uploaded_file:
     selected_truck = st.sidebar.selectbox("Filter by Truck", ["All"] + trucks, key="filter_truck")
     selected_date = st.sidebar.selectbox("Filter by Date", ["All"] + dates, key="filter_date")
 
-    # Apply filters
     filtered_df = df.copy()
     if selected_proj != "All":
         filtered_df = filtered_df[filtered_df["Project or labor?"] == selected_proj]
@@ -116,7 +113,6 @@ if uploaded_file:
     plot_footage(drive_df, "Drive Off")
 
     st.subheader("Work Summary (Grouped by Date and Project)")
-
     def build_summary_from_row(row):
         employees = [row.get(f"Employee{i}" if i > 0 else "Employee") for i in range(6)]
         employees = [str(emp) for emp in employees if pd.notna(emp)]
@@ -146,3 +142,17 @@ if uploaded_file:
                 st.markdown(f"- {line}")
     else:
         st.write("No grouped summaries found for the selected filters.")
+
+    st.subheader("Export Filtered Results")
+    @st.cache_data
+    def convert_df_to_csv(dataframe):
+        return dataframe.to_csv(index=False).encode("utf-8")
+
+    if not filtered_df.empty:
+        csv_data = convert_df_to_csv(filtered_df)
+        st.download_button(
+            label="📤 Download Filtered Data as CSV",
+            data=csv_data,
+            file_name="filtered_construction_data.csv",
+            mime="text/csv"
+        )
