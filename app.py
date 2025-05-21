@@ -174,26 +174,27 @@ if uploaded_file:
         pdf.output(output_path)
         return output_path
 
-    with st.container():
-        if not filtered_df.empty:
-            csv_data = convert_df_to_csv(filtered_df)
-            st.download_button(
-                label="📤 Download Filtered Data as CSV",
-                data=csv_data,
-                file_name="filtered_construction_data.csv",
-                mime="text/csv",
-                key="csv_button_final"
-            )
+    csv_data = convert_df_to_csv(filtered_df if not filtered_df.empty else pd.DataFrame())
+    pdf_path = generate_pdf_summary(summary_groups if summary_groups else [])
 
-            pdf_path = generate_pdf_summary(summary_groups)
-            with open(pdf_path, "rb") as f:
-                st.download_button(
-                    label="📄 Download Filtered Summary as PDF",
-                    data=f,
-                    file_name="filtered_construction_summary.pdf",
-                    mime="application/pdf",
-                    key="pdf_button_final"
-                )
+    col1, col2 = st.columns(2)
+    with col1:
+        st.download_button(
+            label="📤 Download Filtered Data as CSV",
+            data=csv_data,
+            file_name="filtered_construction_data.csv",
+            mime="text/csv",
+            key="csv_button_clean"
+        )
+    with col2:
+        with open(pdf_path, "rb") as f:
+            st.download_button(
+                label="📄 Download Filtered Summary as PDF",
+                data=f,
+                file_name="filtered_construction_summary.pdf",
+                mime="application/pdf",
+                key="pdf_button_clean"
+            )
     @st.cache_data
     def convert_df_to_csv(dataframe):
         return dataframe.to_csv(index=False).encode("utf-8")
@@ -239,26 +240,27 @@ if uploaded_file:
         pdf.output(output_path)
         return output_path
 
-    with st.container():
-        if not filtered_df.empty:
-            csv_data = convert_df_to_csv(filtered_df)
-            st.download_button(
-                label="📤 Download Filtered Data as CSV",
-                data=csv_data,
-                file_name="filtered_construction_data.csv",
-                mime="text/csv",
-                key="csv_button_final"
-            )
+    csv_data = convert_df_to_csv(filtered_df if not filtered_df.empty else pd.DataFrame())
+    pdf_path = generate_pdf_summary(summary_groups if summary_groups else [])
 
-            pdf_path = generate_pdf_summary(summary_groups)
-            with open(pdf_path, "rb") as f:
-                st.download_button(
-                    label="📄 Download Filtered Summary as PDF",
-                    data=f,
-                    file_name="filtered_construction_summary.pdf",
-                    mime="application/pdf",
-                    key="pdf_button_final"
-                )
+    col1, col2 = st.columns(2)
+    with col1:
+        st.download_button(
+            label="📤 Download Filtered Data as CSV",
+            data=csv_data,
+            file_name="filtered_construction_data.csv",
+            mime="text/csv",
+            key="csv_button_clean"
+        )
+    with col2:
+        with open(pdf_path, "rb") as f:
+            st.download_button(
+                label="📄 Download Filtered Summary as PDF",
+                data=f,
+                file_name="filtered_construction_summary.pdf",
+                mime="application/pdf",
+                key="pdf_button_clean"
+            )
 
     @st.cache_data
     def convert_df_to_csv(dataframe):
