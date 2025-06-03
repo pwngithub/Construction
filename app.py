@@ -86,7 +86,7 @@ if uploaded_file:
         st.write("No project data found.")
 
 
-    st.subheader("🔍 Summary by Keyword Mentions in Notes")
+    st.subheader("🔍 Summary by Keyword Mentionsst.subheader("🔍 Summary by Keyword Mentions in Notes (Filtered)")
     keyword_counts = {
         "FAT": 0,
         "Splice enclosure": 0,
@@ -94,14 +94,13 @@ if uploaded_file:
     }
 
     for kw in keyword_counts:
-        count = df["Notes:"].astype(str).str.contains(kw, case=False, na=False).sum()
-        count += df["Amy's Notes"].astype(str).str.contains(kw, case=False, na=False).sum()
+        count = filtered_df["Notes:"].astype(str).str.contains(kw, case=False, na=False).sum()
+        count += filtered_df["Amy's Notes"].astype(str).str.contains(kw, case=False, na=False).sum()
         keyword_counts[kw] = count
 
     summary_df = pd.DataFrame(keyword_counts.items(), columns=["Keyword", "Occurrences"])
     st.dataframe(summary_df)
     st.bar_chart(summary_df.set_index("Keyword"))
-
 
 st.subheader("⬇️ Export Filtered Data")
 csv = filtered_df.to_csv(index=False).encode("utf-8")
