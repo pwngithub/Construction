@@ -88,3 +88,20 @@ if uploaded_file:
     st.subheader("⬇️ Export Filtered Data")
     csv = filtered_df.to_csv(index=False).encode("utf-8")
     st.download_button("Download Filtered Data as CSV", data=csv, file_name="filtered_fiber_pay.csv", mime="text/csv")
+
+
+    st.subheader("🔍 Summary by Keyword Mentions in Notes")
+    keyword_counts = {
+        "FAT": 0,
+        "Splice enclosure": 0,
+        "Patch panel": 0
+    }
+
+    for kw in keyword_counts:
+        count = df["Notes:"].astype(str).str.contains(kw, case=False, na=False).sum()
+        count += df["Amy's Notes"].astype(str).str.contains(kw, case=False, na=False).sum()
+        keyword_counts[kw] = count
+
+    summary_df = pd.DataFrame(keyword_counts.items(), columns=["Keyword", "Occurrences"])
+    st.dataframe(summary_df)
+    st.bar_chart(summary_df.set_index("Keyword"))
