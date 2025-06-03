@@ -86,7 +86,7 @@ if uploaded_file:
         st.write("No project data found.")
 
 
-    st.subheader("🔍 Summary by Keyword Mentionsst.subheader("🔍 Summary by Keyword Mentions in Notes (Filtered)")
+    st.subheader("Summary by Keyword Mentions in Notes (Filtered)")
     keyword_counts = {
         "FAT": 0,
         "Splice enclosure": 0,
