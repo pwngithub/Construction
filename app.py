@@ -41,14 +41,16 @@ if uploaded_file:
     total_hours = filtered_df['Hours Worked'].sum()
     st.metric("Total Hours Worked", f"{total_hours:.2f}")
 
-    # Extract numbers from notes
+    # Extract numbers from both Notes columns
     def extract_numbers(text):
         if pd.isna(text):
             return []
         return [int(n) for n in re.findall(r'\b\d+\b', str(text))]
 
-    notes_numbers = filtered_df["Notes: Amy's Notes"].apply(extract_numbers)
-    all_numbers = [num for sublist in notes_numbers for num in sublist]
+    notes1 = filtered_df.get("Notes:", pd.Series([], dtype=str)).apply(extract_numbers)
+    notes2 = filtered_df.get("Amy's Notes", pd.Series([], dtype=str)).apply(extract_numbers)
+
+    all_numbers = [num for sublist in notes1 for num in sublist] +                   [num for sublist in notes2 for num in sublist]
 
     if all_numbers:
         st.write("📊 Extracted Numbers from Notes:")
