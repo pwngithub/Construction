@@ -9,6 +9,7 @@ uploaded_file = st.file_uploader("Upload Excel File", type=["xlsx"])
 if uploaded_file:
     df = pd.read_excel(uploaded_file)
     df.columns = df.columns.str.strip()
+    df["Hours Worked"] = pd.to_numeric(df["Hours Worked"], errors="coerce")
 
     # Define employee columns
     emp_cols = [col for col in df.columns if col.startswith('Employee')]
