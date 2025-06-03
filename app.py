@@ -53,3 +53,29 @@ if uploaded_file:
         return [int(n) for n in re.findall(r'\b\d+\b', str(text))]
 
 
+
+
+    st.subheader("📊 Summary by Technician")
+
+    # Flatten employee columns into a long-format DataFrame
+    employee_data = []
+    for _, row in filtered_df.iterrows():
+        for col in [col for col in df.columns if col.startswith("Employee")]:
+            tech = row.get(col)
+            if pd.notna(tech):
+                employee_data.append({
+                    "Tech": tech,
+                    "Hours Worked": row.get("Hours Worked", 0),
+                    "Date": row.get("Date")
+                })
+
+    tech_df = pd.DataFrame(employee_data)
+
+    if not tech_df.empty:
+        summary = tech_df.groupby("Tech")["Hours Worked"].sum().reset_index().sort_values(by="Hours Worked", ascending=False)
+        st.dataframe(summary)
+
+        # Bar chart
+        st.bar_chart(summary.set_index("Tech"))
+    else:
+        st.write("No technician data available for current filters.")
