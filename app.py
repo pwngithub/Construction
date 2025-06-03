@@ -23,7 +23,7 @@ if uploaded_file:
 
     selected_date = st.selectbox("Filter by Date", ["All"] + list(date_options))
     selected_project = st.selectbox("Filter by Project", ["All"] + list(project_options))
-    
+
 selected_employee = st.selectbox("Filter by Employee", ["All"] + list(all_employees))
 keyword_filter = st.multiselect("Filter by Keywords in Notes", ["FAT", "Splice enclosure", "Patch panel"])
 
@@ -37,7 +37,7 @@ keyword_filter = st.multiselect("Filter by Keywords in Notes", ["FAT", "Splice e
     if selected_employee != "All":
         filtered_df = filtered_df[df[emp_cols].isin([selected_employee]).any(axis=1)]
 
-    
+
     # Apply keyword filter across both note fields
     if keyword_filter:
         keyword_regex = "|".join(keyword_filter)
