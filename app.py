@@ -45,7 +45,7 @@ if uploaded_file:
     st.dataframe(filtered_df)
 
     st.subheader("Summary")
-    total_hours = filtered_df['Hours Worked'].sum()
+    total_hours = filtered_df['Hours Worked'].sum() if not filtered_df.empty and "Hours Worked" in filtered_df.columns else 0.00
     st.metric("Total Hours Worked", f"{total_hours:.2f}")
 
     st.subheader("📊 Summary by Technician")
