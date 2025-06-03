@@ -85,10 +85,6 @@ if uploaded_file:
     else:
         st.write("No project data found.")
 
-    st.subheader("⬇️ Export Filtered Data")
-    csv = filtered_df.to_csv(index=False).encode("utf-8")
-    st.download_button("Download Filtered Data as CSV", data=csv, file_name="filtered_fiber_pay.csv", mime="text/csv")
-
 
     st.subheader("🔍 Summary by Keyword Mentions in Notes")
     keyword_counts = {
@@ -105,3 +101,8 @@ if uploaded_file:
     summary_df = pd.DataFrame(keyword_counts.items(), columns=["Keyword", "Occurrences"])
     st.dataframe(summary_df)
     st.bar_chart(summary_df.set_index("Keyword"))
+
+
+st.subheader("⬇️ Export Filtered Data")
+csv = filtered_df.to_csv(index=False).encode("utf-8")
+st.download_button("Download Filtered Data as CSV", data=csv, file_name="filtered_fiber_pay.csv", mime="text/csv")
