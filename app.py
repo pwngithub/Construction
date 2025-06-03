@@ -47,6 +47,9 @@ if uploaded_file:
     total_hours = filtered_df['Hours Worked'].sum()
     st.metric("Total Hours Worked", f"{total_hours:.2f}")
 
-    
-    else:
-        st.write("No numbers found in notes.")
+    def extract_numbers(text):
+        if pd.isna(text):
+            return []
+        return [int(n) for n in re.findall(r'\b\d+\b', str(text))]
+
+
