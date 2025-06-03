@@ -79,3 +79,23 @@ if uploaded_file:
         st.bar_chart(summary.set_index("Tech"))
     else:
         st.write("No technician data available for current filters.")
+
+
+    st.subheader("📆 Daily Hours Trend")
+    if not tech_df.empty:
+        daily_summary = tech_df.groupby("Date")["Hours Worked"].sum().reset_index()
+        st.line_chart(daily_summary.set_index("Date"))
+    else:
+        st.write("No data to show for daily trend.")
+
+    st.subheader("📁 Project-Based Summary")
+    if "Project" in filtered_df.columns:
+        project_summary = filtered_df.groupby("Project")["Hours Worked"].sum().reset_index().sort_values(by="Hours Worked", ascending=False)
+        st.dataframe(project_summary)
+        st.bar_chart(project_summary.set_index("Project"))
+    else:
+        st.write("No project data found.")
+
+    st.subheader("⬇️ Export Filtered Data")
+    csv = filtered_df.to_csv(index=False).encode("utf-8")
+    st.download_button("Download Filtered Data as CSV", data=csv, file_name="filtered_fiber_pay.csv", mime="text/csv")
