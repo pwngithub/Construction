@@ -49,6 +49,7 @@ def extract_footage_by_activity(row):
                 except:
                 return 0
                 return 0
+        pass
 
 def assign_footage(data):
         data = data.copy()
