@@ -72,34 +72,23 @@ if uploaded_file:
 
     st.subheader("Footage Bar Charts per Technician")
 
-    st.subheader("📊 Footage by Truck")
-    truck_footage = filtered_df.copy()
-    truck_footage = assign_footage(truck_footage)
-    truck_totals = truck_footage.groupby("What Truck?")["Footage"].sum()
-    if not truck_totals.empty:
-        fig, ax = plt.subplots()
-        truck_totals.plot(kind="bar", ax=ax, color="orange")
-        ax.set_ylabel("Footage")
-        ax.set_xlabel("Truck")
-        st.pyplot(fig)
+    
+    st.subheader("📊 Footage by Truck and Activity")
 
-
-
-    def plot_footage(data, label):
-        tech_footage = data.groupby("Who filled this out?")["Footage"].sum()
-        if not tech_footage.empty:
-            st.write(f"### {label}")
+    def plot_truck_footage(data, label, color):
+        truck_totals = data.groupby("What Truck?")["Footage"].sum()
+        if not truck_totals.empty:
+            st.write(f"#### {label}")
             fig, ax = plt.subplots()
-            tech_footage.plot(kind="bar", ax=ax)
+            truck_totals.plot(kind="bar", ax=ax, color=color)
             ax.set_ylabel("Footage")
-            ax.set_xlabel("Technician")
+            ax.set_xlabel("Truck")
             st.pyplot(fig)
 
-    plot_footage(lash_df, "Fiber Lash Footage")
-    plot_footage(pull_df, "Fiber Pull Footage")
-    plot_footage(strand_df, "Strand Footage")
-
-    st.subheader("Work Summary (Grouped by Date and Project)")
+    plot_truck_footage(lash_df, "Fiber Lash Footage by Truck", "blue")
+    plot_truck_footage(pull_df, "Fiber Pull Footage by Truck", "green")
+    plot_truck_footage(strand_df, "Strand Footage by Truck", "orange")
+st.subheader("Work Summary (Grouped by Date and Project)")
 
     def build_summary_from_row(row):
         employees = [row.get(f"Employee{i}" if i > 0 else "Employee") for i in range(6)]
