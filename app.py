@@ -30,7 +30,7 @@ if uploaded_file:
     st.subheader("Filtered Data")
     st.dataframe(filtered_df)
 
-    def extract_footage_by_activity(row):
+def extract_footage_by_activity(row):
         activity = str(row.get("What did you do.", "")).lower()
         source_col = None
         if "lashed fiber" in activity:
@@ -50,7 +50,7 @@ if uploaded_file:
                     return 0
         return 0
 
-    def assign_footage(data):
+def assign_footage(data):
         data = data.copy()
         data["Footage"] = data.apply(extract_footage_by_activity, axis=1)
         return data
@@ -75,7 +75,7 @@ if uploaded_file:
     
     st.subheader("📊 Footage by Truck and Activity")
 
-    def plot_truck_footage(data, label, color):
+def plot_truck_footage(data, label, color):
         truck_totals = data.groupby("What Truck?")["Footage"].sum()
         if not truck_totals.empty:
             st.write(f"#### {label}")
@@ -90,7 +90,7 @@ if uploaded_file:
     plot_truck_footage(strand_df, "Strand Footage by Truck", "orange")
 st.subheader("Work Summary (Grouped by Date and Project)")
 
-    def build_summary_from_row(row):
+def build_summary_from_row(row):
         employees = [row.get(f"Employee{i}" if i > 0 else "Employee") for i in range(6)]
         employees = [str(emp) for emp in employees if pd.notna(emp)]
         employee_str = ", ".join(employees[:-1]) + f" and {employees[-1]}" if len(employees) > 1 else employees[0] if employees else "Unknown"
