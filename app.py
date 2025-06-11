@@ -72,6 +72,19 @@ if uploaded_file:
 
     st.subheader("Footage Bar Charts per Technician")
 
+    st.subheader("📊 Footage by Truck")
+    truck_footage = filtered_df.copy()
+    truck_footage = assign_footage(truck_footage)
+    truck_totals = truck_footage.groupby("What Truck?")["Footage"].sum()
+    if not truck_totals.empty:
+        fig, ax = plt.subplots()
+        truck_totals.plot(kind="bar", ax=ax, color="orange")
+        ax.set_ylabel("Footage")
+        ax.set_xlabel("Truck")
+        st.pyplot(fig)
+
+
+
     def plot_footage(data, label):
         tech_footage = data.groupby("Who filled this out?")["Footage"].sum()
         if not tech_footage.empty:
