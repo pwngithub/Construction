@@ -27,8 +27,8 @@ if uploaded_file:
     if selected_truck != "All":
         filtered_df = filtered_df[filtered_df["What Truck?"] == selected_truck]
 
-    st.subheader("Filtered Data")
-    st.dataframe(filtered_df)
+        st.subheader("Filtered Data")
+        st.dataframe(filtered_df)
 
 def extract_footage_by_activity(row):
         activity = str(row.get("What did you do.", "")).lower()
@@ -47,8 +47,8 @@ def extract_footage_by_activity(row):
                 try:
                     return float(match.group(1).replace(",", ""))
                 except:
-                    return 0
-        return 0
+                return 0
+                return 0
 
 def assign_footage(data):
         data = data.copy()
@@ -72,7 +72,7 @@ def assign_footage(data):
 
     st.subheader("Footage Bar Charts per Technician")
 
-    
+
     st.subheader("📊 Footage by Truck and Activity")
 
 def plot_truck_footage(data, label, color):
@@ -88,7 +88,7 @@ def plot_truck_footage(data, label, color):
     plot_truck_footage(lash_df, "Fiber Lash Footage by Truck", "blue")
     plot_truck_footage(pull_df, "Fiber Pull Footage by Truck", "green")
     plot_truck_footage(strand_df, "Strand Footage by Truck", "orange")
-st.subheader("Work Summary (Grouped by Date and Project)")
+    st.subheader("Work Summary (Grouped by Date and Project)")
 
 def build_summary_from_row(row):
         employees = [row.get(f"Employee{i}" if i > 0 else "Employee") for i in range(6)]
@@ -100,9 +100,9 @@ def build_summary_from_row(row):
         footage = row.get("Footage", 0)
         if employees and footage > 0:
             return f"{employee_str} used {truck} to do {action} with {fiber} for {int(footage)} feet."
-        return None
+            return None
 
-    summary_groups = []
+            summary_groups = []
 
     for (date, project), group in filtered_df.groupby(["Date", "Project or labor?"], dropna=False):
         group = assign_footage(group)
