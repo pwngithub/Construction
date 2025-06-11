@@ -27,10 +27,10 @@ if uploaded_file:
     if selected_truck != "All":
         filtered_df = filtered_df[filtered_df["What Truck?"] == selected_truck]
 
-        st.subheader("Filtered Data")
-        st.dataframe(filtered_df)
+    st.subheader("Filtered Data")
+    st.dataframe(filtered_df)
 
-def extract_footage_by_activity(row):
+    def extract_footage_by_activity(row):
         activity = str(row.get("What did you do.", "")).lower()
         source_col = None
         if "lashed fiber" in activity:
@@ -47,11 +47,10 @@ def extract_footage_by_activity(row):
                 try:
                     return float(match.group(1).replace(",", ""))
                 except:
-                return 0
-                return 0
-        pass
+                    return 0
+        return 0
 
-def assign_footage(data):
+    def assign_footage(data):
         data = data.copy()
         data["Footage"] = data.apply(extract_footage_by_activity, axis=1)
         return data
@@ -73,25 +72,23 @@ def assign_footage(data):
 
     st.subheader("Footage Bar Charts per Technician")
 
-
-    st.subheader("📊 Footage by Truck and Activity")
-
-def plot_truck_footage(data, label, color):
-        truck_totals = data.groupby("What Truck?")["Footage"].sum()
-        if not truck_totals.empty:
-            st.write(f"#### {label}")
+    def plot_footage(data, label):
+        tech_footage = data.groupby("Who filled this out?")["Footage"].sum()
+        if not tech_footage.empty:
+            st.write(f"### {label}")
             fig, ax = plt.subplots()
-            truck_totals.plot(kind="bar", ax=ax, color=color)
+            tech_footage.plot(kind="bar", ax=ax)
             ax.set_ylabel("Footage")
-            ax.set_xlabel("Truck")
+            ax.set_xlabel("Technician")
             st.pyplot(fig)
 
-    plot_truck_footage(lash_df, "Fiber Lash Footage by Truck", "blue")
-    plot_truck_footage(pull_df, "Fiber Pull Footage by Truck", "green")
-    plot_truck_footage(strand_df, "Strand Footage by Truck", "orange")
+    plot_footage(lash_df, "Fiber Lash Footage")
+    plot_footage(pull_df, "Fiber Pull Footage")
+    plot_footage(strand_df, "Strand Footage")
+
     st.subheader("Work Summary (Grouped by Date and Project)")
 
-def build_summary_from_row(row):
+    def build_summary_from_row(row):
         employees = [row.get(f"Employee{i}" if i > 0 else "Employee") for i in range(6)]
         employees = [str(emp) for emp in employees if pd.notna(emp)]
         employee_str = ", ".join(employees[:-1]) + f" and {employees[-1]}" if len(employees) > 1 else employees[0] if employees else "Unknown"
@@ -101,9 +98,9 @@ def build_summary_from_row(row):
         footage = row.get("Footage", 0)
         if employees and footage > 0:
             return f"{employee_str} used {truck} to do {action} with {fiber} for {int(footage)} feet."
-            return None
+        return None
 
-            summary_groups = []
+    summary_groups = []
 
     for (date, project), group in filtered_df.groupby(["Date", "Project or labor?"], dropna=False):
         group = assign_footage(group)
